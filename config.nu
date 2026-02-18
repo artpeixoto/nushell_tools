@@ -221,5 +221,4 @@ path add "~/.local/bin/dynamics/consultar_campos_de_entidades/"
 $env.PATH = ($env.PATH | uniq)
 
 
-use ./libs/nupm ;
 use ./libs/starship.nu ;
