@@ -1,0 +1,1 @@
+alias "sys registry" = registry;
