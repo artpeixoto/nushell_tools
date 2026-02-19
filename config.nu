@@ -19,7 +19,6 @@ $env.PROMPT_INDICATOR_VI_INSERT = ""
 $env.PROMPT_MULTILINE_INDICATOR = ""       
                                               
 $env.TRANSIENT_PROMPT_COMMAND = ""          
-$env.TRANSIENT_PROMPT_INDICATOR = ""           
 $env.TRANSIENT_PROMPT_INDICATOR_VI_INSERT = ""                    
 $env.TRANSIENT_PROMPT_INDICATOR_VI_NORMAL = ""                    
 $env.TRANSIENT_PROMPT_MULTILINE_INDICATOR = ""                    
@@ -221,4 +220,5 @@ path add "~/.local/bin/dynamics/consultar_campos_de_entidades/"
 $env.PATH = ($env.PATH | uniq)
 
 
-use ./libs/starship.nu ;
+use starship.nu ;
+use cmp_utils * ;

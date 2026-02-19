@@ -11,7 +11,7 @@ export def main [prompt: string, response_sample?: any] : [any -> any] {
         }) |  
         to json;
 
-    let prompt = $"Execute o trabalho a seguir. Sua responsta deve ser APENAS json válido. Não deve ter comentários nem markdown. Um schema é fornecido.\n---\nTRABALHO: ($prompt)\n---\nSCHEMA: ($schema_input)\n---\nENTRADA: \'($input)\'";
+    let prompt = $"Resolve the following task. You response must be composed SOLELY of JSON. It should include no commentaries nor markdown. Follow output schema defined ahead. You may receive a list of inputs. In that case, your response must be a list, whose elements must, individually, match the schema.\n---\nTRABALHO: ($prompt)\n---\nSCHEMA: ($schema_input)\n---\nENTRADA: \'($input)\'";
     aichat $prompt | from json 
 }
 
