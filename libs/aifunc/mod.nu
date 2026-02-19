@@ -1,17 +1,17 @@
 
-export def main [prompt: string, response_sample?: any] : [any -> any] {
+export def main [prompt: string, response_sample: any] : [any -> any] {
     use ../json;
     let input = $in | to json; 
     let schema_input = ( 
-        if $response_sample != null { 
-            let format = {output: $response_sample} | json schema infer ;
+        do { 
+            let format = $response_sample | json schema infer ;
             $format
-        } else {
-            {type: "json_object"} 
-        }) |  
-        to json;
+        } |  
+        to json
+    );
 
-    let prompt = $"Resolve the following task. You response must be composed SOLELY of JSON. It should include no commentaries nor markdown. Follow output schema defined ahead. You may receive a list of inputs. In that case, your response must be a list, whose elements must, individually, match the schema.\n---\nTRABALHO: ($prompt)\n---\nSCHEMA: ($schema_input)\n---\nENTRADA: \'($input)\'";
+    let prompt = $"Resolve the following task. You response must be composed SOLELY of JSON. It should include no commentaries nor markdown. Follow output schema defined ahead. You may receive a list of inputs. In that case, your response must be a list, whose elements must, individually, match the schema.\n---\nTASK: ($prompt)\n---\nOUTPUT SCHEMA: ($schema_input)\n---\nINPUT: \'($input)\'";
+
     aichat $prompt | from json 
 }
 
@@ -24,24 +24,22 @@ export def generate_code [prompt: string, input_sample: any, response_sample: an
         } else {
             {description: "any", schema:{type: "json_object"}} 
         }
-    )
+    );
 
-        ;
-    $"
-        export def main [] : [any -> ($output_info.description)]  { 
-            let input = $in ; 
-            let output_schema = ($output_info.schema) ; 
+    $"export def main [] : [any -> ($output_info.description)]  { 
+    let input = $in ; 
+    let output_schema = ($output_info.schema) ; 
 
-            let base_prompt = \"Resolve the following task. You response must be composed SOLELY of JSON. It should include no commentaries nor markdown. Follow output schema defined ahead. You may receive a list of inputs. In that case, your response must be a list, whose elements must, individually, match the schema \" ;
+    let base_prompt = \"Resolve the following task. You response must be composed SOLELY of JSON. It should include no commentaries nor markdown. Follow output schema defined ahead. You may receive a list of inputs. In that case, your response must be a list, whose elements must, individually, match the schema \" ;
 
-            let task_prompt = \"TASK: \" + \"($prompt)\" ;
+    let task_prompt = \"TASK: \" + \"($prompt)\" ;
 
-            let output_schema_prompt = \"SCHEMA: \" + \($output_schema | to json\);
-            let input_prompt =  \"INPUT: \"  + \($input | to json \)  ;
-             
-            let prompt = [$base_prompt, $task_prompt, $output_schema_prompt, $input_prompt] | str join \"\\n---\\n\" ;
+    let output_schema_prompt = \"SCHEMA: \" + \($output_schema | to json\);
+    let input_prompt =  \"INPUT: \"  + \($input | to json \)  ;
+        
+    let prompt = [$base_prompt, $task_prompt, $output_schema_prompt, $input_prompt] | str join \"\\n---\\n\" ;
 
-            aichat $prompt | from json 
-        }
+    aichat $prompt | from json 
+}
     "
 }

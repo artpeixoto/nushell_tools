@@ -17,7 +17,10 @@ export def main [] {
     let to_change = (
         $data | 
         recurse | 
-        where {|el|  match $el.item { {format: $item} => true, _ => false }} | 
+        where {|el|  match $el.item { 
+            { format: $item } => true, 
+            _ => false 
+        } } | 
         where ($it.item.format =~ "int" or $it.item.format =~ "double") and $it.item not-has "type" 
     )
 
