@@ -1,13 +1,16 @@
-use openapi_utils ensure_operation_ids;
+use ./fix_operations_without_ids.nu;
+
+use ../kvp_utils * ;
+use ../cmp_utils * ;
+use ../type_utils * ;
+
 use std/log ;
-use kvp_utils * ;
-use cmp_utils * ;
 use std-rfc/iter recurse ;
-use type_utils * ;
+
 export def main [] {
     let data = $in;
 
-    let data = $data | ensure_operation_ids ;
+    let data = $data | fix_operations_without_ids ;
 
     mut new_data = $data ;
     
