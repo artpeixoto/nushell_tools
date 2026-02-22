@@ -1,0 +1,26 @@
+
+(source_file [0, 0] - [0, 52]
+  (type [0, 0] - [0, 52]
+    (composed_type [0, 0] - [0, 52]
+      (record_type [0, 0] - [0, 52]
+        (field_defn [0, 7] - [0, 13]
+          (field_name [0, 7] - [0, 8])
+          (type [0, 10] - [0, 13]
+            (value_type [0, 10] - [0, 13])))
+        (field_defn [0, 15] - [0, 40]
+          (field_name [0, 15] - [0, 16])
+          (type [0, 18] - [0, 40]
+            (composed_type [0, 18] - [0, 40]
+              (record_type [0, 18] - [0, 40]
+                (field_defn [0, 25] - [0, 31]
+                  (field_name [0, 25] - [0, 26])
+                  (type [0, 28] - [0, 31]
+                    (value_type [0, 28] - [0, 31])))
+                (field_defn [0, 33] - [0, 39]
+                  (field_name [0, 33] - [0, 34])
+                  (type [0, 36] - [0, 39]
+                    (value_type [0, 36] - [0, 39])))))))
+        (field_defn [0, 42] - [0, 51]
+          (field_name [0, 42] - [0, 43])
+          (type [0, 45] - [0, 51]
+            (value_type [0, 45] - [0, 51])))))))

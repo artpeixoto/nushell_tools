@@ -1,0 +1,1 @@
+record<a: int, b: record<c: int, d: int>, e: string>
