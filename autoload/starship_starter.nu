@@ -4,7 +4,7 @@ use std/random ;
 # - overlay which can be loaded with `overlay use starship.nu`
 # - module which can be used with `use starship.nu`
 # - script which can be used with `source starship.nu`
-alias starship = ^'C:\Program Files\starship\bin\starship.exe';
+# alias starship = ^'C:\Program Files\starship\bin\starship.exe';
 def get_jobs_list [] { }
 def get_common_args [] : nothing -> list<string> {
     let path_args = [--path, ( pwd )]
@@ -33,7 +33,9 @@ def get_common_args [] : nothing -> list<string> {
 def  get_command_prompt [] {
     	(
             starship prompt ...(get_common_args) 
-        ) + "\n"
+        ) 
+        # + 
+        # "\n"
         # (
         #     # The initial value of `$env.CMD_DURATION_MS` is always `0823`, which is an official setting.
         #     # See https://github.com/nushell/nushell/discussions/6402#discussioncomment-3466687.
@@ -71,7 +73,7 @@ def get_right_prompt [] {
             # The initial value of `$env.CMD_DURATION_MS` is always `0823`, which is an official setting.
             # See https://github.com/nushell/nushell/discussions/6402#discussioncomment-3466687.
             let cmd_duration = if $env.CMD_DURATION_MS == "0823" { 0 } else { $env.CMD_DURATION_MS };
-            ^'C:\Program Files\starship\bin\starship.exe' prompt
+            starship prompt
                 --right
                 --cmd-duration $cmd_duration
                 $"--status=($env.LAST_EXIT_CODE)"

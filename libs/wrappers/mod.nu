@@ -5,5 +5,6 @@ export use file.nu * ;
 export use scope.nu * ;
 export use docker.nu ;
 export use sys.nu ;
+export use git.nu ; 
 export module search.nu ;
 export module yazi.nu ;

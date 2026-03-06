@@ -16,11 +16,12 @@ export def main [] {
         }
 
         for method in [ get post put patch options delete ] {
-        if ($path_data not-has $method) { continue }
-        mut req = $path_data | get $method ;
-        let id = do $make_req_id $method ;
-        $req.operationId = $id;
-        $path_data = $path_data | update $method $req
+            if ($path_data not-has $method) { continue }
+
+            mut req = $path_data | get $method ;
+            let id = do $make_req_id $method ;
+            $req.operationId = $id;
+            $path_data = $path_data | update $method $req
         }
 
         $res ++= [{key: $path, value: $path_data } ]
