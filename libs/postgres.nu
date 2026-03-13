@@ -1,4 +1,4 @@
-export def --wrapped psql [
+export def --wrapped "pg sql" [
     --conn_data: record<host:string, port:int, user:string, password:string, database?: string>, 
     ...rest 
 ] : [
@@ -25,7 +25,5 @@ export def --wrapped psql [
             ...$rest
         ) | 
         from csv 
-        
-
     }
 }
