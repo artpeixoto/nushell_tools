@@ -19,6 +19,13 @@ export def "into kvs" [] : [any -> table<key: string, value: any>] {
     $input | columns | wrap key | insert value {|col| $input | get $col.key} 
 }
 
+export def "into kvs --deep" [] : [any -> table<key: string, value: any>] {
+    use std-rfc/iter *;
+    let input = $in ; 
+
+    $input | columns | wrap key | insert value {|col| $input | get $col.key} 
+}
+
 export def "from kvs" [] : [table<key: string, value: any> -> record] {
     mut res = {}
 
