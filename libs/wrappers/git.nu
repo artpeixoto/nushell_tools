@@ -1,4 +1,4 @@
-use ../kvp_utils * ; 
+use ../kv_utils * ; 
 
 export def --wrapped log [ ...rest ]: [] {
     let reg = '(?m)(?<id>[a-f0-9]+)( \((?<source>.*)\))?$\n(?<kwargs>(^\w+:\s+.+$)(\n(^\w+:\s+.+$))*)\n(?<message>(\s+.*$)(\n(\s+.*$))*)?';

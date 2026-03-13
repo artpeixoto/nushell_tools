@@ -1,12 +1,12 @@
-use ../kvp_utils/ * ;
+use ../kv_utils/ * ;
 use std/random ;
 
 export def main [] {
     mut api = $in;
-
-    let paths = $api.paths | into kvps ;
+    
+    let paths = $api.paths | into kvs ;
     mut res = []
-
+    
     for kvp in $paths {
         let path = $kvp.key ;
         mut path_data = $kvp.value;
@@ -22,11 +22,11 @@ export def main [] {
             let id = do $make_req_id $method ;
             $req.operationId = $id;
             $path_data = $path_data | update $method $req
-        }
+        }  
 
         $res ++= [{key: $path, value: $path_data } ]
     }
     
-    $api.paths = $res | from kvps
+    $api.paths = $res | from kvs
     $api
 }
