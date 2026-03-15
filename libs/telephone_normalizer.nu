@@ -1,4 +1,3 @@
-
 export def main [] : [list -> record<input: string, normalized: string>]  { 
     let input = $in ; 
     let output_schema = {properties: {output: {properties: {input: {type: string}, normalized: {type: string}}, required: [input, normalized], type: object}}, required: [output], type: object} ; 

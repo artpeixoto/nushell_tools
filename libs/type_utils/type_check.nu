@@ -1,42 +1,61 @@
-use ../cmp_utils/ *;
+use ../cmp_utils *;
 
-export def "type" [] : [any -> string] {
-    $in | describe 
-}
-
-export def "type --major" [] : [any -> string] {
+export def "typeof" [] : [
+    any -> string
+] {
     $in | describe | split words | first
 }
 
-export def "is_record" [] : [any -> bool] {
-    $in | type --major | eq "record"
-}  
-
-export def "is_table" [] : [any -> bool] {
-    $in | describe | str starts-with 'table'
+export def "typeof --full" [] : [
+    any -> string
+] {
+    $in | describe 
 }
 
-export def "is_list" [] : [any -> bool] {
-    $in | describe | str starts-with 'list'
-} 
-
-export def "is_iterable" [] : [any -> bool] {
-    $in | type --major | $in in [table list]
+# this is true if the value can be accessed through string cellpaths
+export def is_field_container [] : [any -> bool] { 
+    $in | typeof | $in in [table record]
 }
 
-export def "is_null" [] : [any -> bool] {
-    $in == null
+export def is_element_container [] : [any -> bool] {
+    $in | typeof | $in in [table list]
 }
 
-export def "is_alternative" [] : [any -> bool] {
-    $in | describe --detailed | $in.type == "null"
+# export def is_container [] : [any -> bool] {
+#     $in | typeof | $in in [table record list]
+# }
+
+export def is_iterable [] : [] {
+    $in | typeof | $in in [list table range]
 }
 
-export def "is_value" [] : [any -> bool] {
-    $in | describe --detailed | $in.type not-in [oneof closure list record table]
-} 
+# this is true if the type cant be accessed through cellpaths
+# inverse of is_container
+export def is_atomic [] : [any -> bool] {
+    $in | typeof | $in not-in [table record list]
+}
 
-# basically, returns if the value is of type table or record;
-export def "is_container" [] : [any -> bool] {
-    $in | type --major | $in in [table record] 
+export def is_record [] : [any -> bool] {
+    $in | typeof |  eq record
+}
+
+export def is_table [] : [any -> bool] {
+    $in | typeof |  eq table
+}
+
+export def is_list [] : [any -> bool] {
+    $in | typeof |  eq list
+}
+
+export def is_null [] : [any -> bool] {
+    $in | typeof | eq nothing
+}
+
+export def is_alternative [] : [any -> bool] {
+
+    $in | typeof | eq oneof
+}
+
+export def is_primitive [] : [] {
+    $in | typeof | $in not-in [oneof closure list record table]
 }

@@ -1,4 +1,3 @@
-
 use std/random ;
 # this file is both a valid
 # - overlay which can be loaded with `overlay use starship.nu`

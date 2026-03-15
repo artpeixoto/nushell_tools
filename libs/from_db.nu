@@ -25,6 +25,13 @@ export def "from db" []: [string -> table] {
 
     let value_lines  = $lines  | skip 2 | drop 1;
 
-    $value_lines | par-each --keep-order {$in | do $split_cells | each {detect type} | let values; $headers | zip $values | from kvs --by-order }
+    $value_lines | par-each --keep-order {
+        $in | 
+        do $split_cells | 
+        each {detect type} | 
+        let values; $headers | 
+        zip $values | 
+        from kv --list 
+    }
     
 } 

@@ -2,3 +2,5 @@ history.*
 plugin.msgpackz
 plugins
 config.nu
+**
+!libs/**

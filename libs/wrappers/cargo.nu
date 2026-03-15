@@ -1,6 +1,5 @@
 def --wrapped original_cargo [...rest] {
 	let cargo_path = which cargo | get path | first ; 
-
 	run-external $cargo_path ...$rest
 }
 

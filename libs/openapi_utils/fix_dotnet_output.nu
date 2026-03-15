@@ -1,7 +1,9 @@
-use ./fix_operations_without_ids.nu;
+# use ./fix_operations_without_ids.nu;
 use ../kv_utils * ;
 use ../cmp_utils * ;
-use ../type_utils * ;
+# use ../type_utils * ;
+
+use ../cmp_utils * ;
 
 use std/log ;
 use std-rfc/iter recurse ;
@@ -16,12 +18,14 @@ export def main [] {
     let to_change = (
         $data | 
         recurse | 
-        where {|el|  match $el.item { 
-            { format: $item } => true, 
-            _ => false 
-        } } | 
+        where {|el|  
+            match $el.item { 
+                { format: $item } => true, 
+                _ => false 
+            } 
+        } | 
         where ($it.item.format =~ "int" or $it.item.format =~ "double") and $it.item not-has "type" 
-    )
+    );
 
     for field in $to_change {
         mut item = $field.item; 
@@ -49,18 +53,19 @@ export def main [] {
         where {|el| $el.item |  columns | $in has content } | 
         where {|el| $el.item.content | columns | length | gt 1 } |
         each { |el| 
-            if ( $el.item.content not-has "application/json" ) { return null; }
+            if ( $el.item.content not-has "application/json" ) { 
+                return null; 
+            }
             mut new_item = $el.item;
             $new_item.content = $new_item.content | select "application/json"
-
-            return {path: $el.path, item: $new_item}
-        }
-        | where {neq null}
-        | reduce --fold $data  {|it, acc| 
+            return { path: $el.path, item: $new_item }
+        } | 
+        where {neq null} | 
+        reduce --fold $data  { |it, acc| 
             log info $"updating ($it.path) with value ( $it.item )"
             $acc | update ( $it.path ) ($it.item)  
         }
-    )
+    );
 
-    $data
+    return $data
 }

@@ -1,3 +1,4 @@
-export def main [] : [string -> bool] {
-	$in | split chars | all {|c| $c in ["\n", "\t", "\r", " "]}
+
+export def 'str is_empty_or_white' [] : [string -> bool] {
+	$in | split chars | all {$in in ["\n", "\t", "\r", " "]}
 }

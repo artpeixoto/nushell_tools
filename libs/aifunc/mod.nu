@@ -1,6 +1,6 @@
-
 export def main [prompt: string, response_sample: any] : [any -> any] {
     use ../json;
+
     let input = $in | to json; 
     let schema_input = ( 
         do { 

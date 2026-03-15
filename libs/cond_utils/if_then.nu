@@ -1,14 +1,15 @@
-export def do_if [cond: closure, mapper: closure] : [any -> any] {
+export def do_if [ cond, mapper]   {
     let input = $in ; 
     let satisfies_cond = ($input | do $cond);
-    if $satisfies_cond {
-        let result = $input | do $mapper ; 
-        $result
+
+    if ( $satisfies_cond ) {
+        let result = ( $input | do $mapper ) ; 
+        return ( $result )
     } else {
-        $input
+        return ( $input )
     }
 } 
 
-export def map_where [cond: closure, map: closure] : [ any -> any ] {
+export def each_where [cond, map]   {
     $in | each { do_if $cond $map } 
 }

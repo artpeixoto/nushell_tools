@@ -17,8 +17,8 @@ export def --wrapped log [ ...rest ]: [] {
         $things.kwargs | 
         each { 
             lines | 
-            parse --regex '(?<key>\w+):\s*(?<value>.+)' | 
-            from kvps | 
+            parse --regex '(?<key>\w+)\s*:\s*(?<value>.+)' | 
+            from kv | 
             rename --block {str snake-case} | 
             update date {into datetime} | 
             update author { parse --regex '^(?<name>.*?) <(?<email>.*?)>$' } 

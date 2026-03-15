@@ -1,5 +1,6 @@
-use aifunc;
+use ./aifunc;
 use std/log;
+
 export def main [] : [string -> table<topic: string, content: string>] {
     let prompt = "o texto que eu vou te passar fala de muitas coisas. Eu gostaria que você separasse ele de acordo com o assunto. Pra cada bloco, me informa a linha de inicio, e a linha de fim, o assunto em uma frase pequena. Para te ajudar, cada linha do texto foi enumerada.";
 

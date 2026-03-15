@@ -1,3 +1,5 @@
-export module parsing/ ;
-export module is_empty_or_whitespace.nu ; 
-export module escape.nu ;
+module is_empty_or_whitespace.nu ; 
+export use is_empty_or_whitespace * ;
+
+module escape.nu ;
+export use escape *;
