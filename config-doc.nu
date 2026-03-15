@@ -996,6 +996,5 @@ $env.PATH = [ "~/.local/bin" ] ++ $env.PATH
 use std/util "path add"
 path add "~/.local/bin"
 path add ($env.CARGO_HOME | path join "bin")
-
 # You can remove duplicate directories from the path using:
 $env.PATH = ($env.PATH | uniq)
