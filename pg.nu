@@ -4,7 +4,6 @@ export def  --wrapped sql [
     ...rest
 ] : [
     string  -> table, 
-    nothing -> any,
 ] {
     let input = $in ; 
     let interactive_mode: bool = $input | is-empty;

@@ -1,15 +1,13 @@
-use ../cmp_utils *;
-
-export def "typeof" [] : [
+export def "typeof" [ input? ] : [
     any -> string
 ] {
-    $in | describe | split words | first
+    let pipe_in = $in ; 
+    $input | default $pipe_in | describe | split words | first
 }
 
-export def "typeof --full" [] : [
-    any -> string
-] {
-    $in | describe 
+export def "typeof --full" [input?] : [ any -> string ] {
+    let pipe_in = $in ; 
+    $input | default $pipe_in | describe  
 }
 
 # this is true if the value can be accessed through string cellpaths
@@ -48,12 +46,11 @@ export def is_list [] : [any -> bool] {
 }
 
 export def is_null [] : [any -> bool] {
-    $in | typeof | eq nothing
+    $in | eq null
 }
 
 export def is_alternative [] : [any -> bool] {
-
-    $in | typeof | eq oneof
+    $in | typeof | eq "oneof"
 }
 
 export def is_primitive [] : [] {

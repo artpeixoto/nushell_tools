@@ -1,4 +1,4 @@
-export def do_if [ cond, mapper]   {
+export def do_if [ cond, mapper] {
     let input = $in ; 
     let satisfies_cond = ($input | do $cond);
 

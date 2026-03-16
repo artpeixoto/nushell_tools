@@ -14,7 +14,12 @@ export def --wrapped "cargo info" [crate_name: string, ...rest] {
 	let description = $description_lines | str join " ";
 	let remainder_lines = $lines | skip (1 + ($description_lines | length)) | take while {$in like $simple_prop_regex}
 	
-	let remainder = $remainder_lines	 | str join "\n" | parse --regex $simple_prop_regex | transpose --header-row --as-record
+	let remainder = (
+		$remainder_lines | 
+		str join "\n" | 
+		parse --regex $simple_prop_regex | 
+		transpose --header-row --as-record
+	);
 
 	let features_lines = $lines | skip ( 1 + ($description_lines | length)  + ($remainder_lines | length));
 	let features_lines = $features_lines | skip until {$in | str trim | str starts-with "features"}

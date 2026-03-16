@@ -69,7 +69,6 @@ export module completions {
     --help(-h)                                          # Print help
     --version(-V)                                       # Print version
   ]
-
 }
 
 export use completions aichat ;

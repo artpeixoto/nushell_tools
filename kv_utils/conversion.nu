@@ -1,4 +1,4 @@
-use ../type_utils/type_check.nu *;
+use ../type_utils/  *;
 
 export def "into kv" [] : [any -> table<key: string, value: any>] {
     let input = $in ; 
@@ -12,14 +12,9 @@ export def "into kv" [] : [any -> table<key: string, value: any>] {
 
 
 export def "from kv" [
-    --key_path (-k)   : oneof<string, oneof<cell-path, int>>, 
+    --key_path   (-k) : oneof<string, oneof<cell-path, int>>, 
     --value_path (-v) : oneof<string, oneof<cell-path, int>>
-] : [
-    table<key: string, value: any> -> record,
-    table<path: string, item: any> -> record,
-    table       -> record,
-    list<any>   -> record
-] {
+] : [] {
     let input = $in ; 
 
     let get_default_paths = {

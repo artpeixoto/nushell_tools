@@ -1,4 +1,4 @@
-use ../../kv_utils/ * ;
+use ../kv_utils/ * ;
 
 export def "zip --record"  [input?: record ] : [
 	record -> table

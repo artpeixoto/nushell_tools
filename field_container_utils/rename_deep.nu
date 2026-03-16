@@ -1,4 +1,4 @@
-use ../type_check.nu * 
+use ../type_utils/type_check.nu * ; 
 
 export def "rename --deep" [renamer: closure] : [any -> any] {
     mut renamed = $in | rename --block $renamer  ;

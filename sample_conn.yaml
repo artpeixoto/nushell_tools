@@ -1,5 +1,0 @@
-host: localhost
-port: 5433
-user: postgres
-password: postgres
-database: customer_service_ai
