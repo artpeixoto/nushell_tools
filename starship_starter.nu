@@ -30,7 +30,7 @@ def get_common_args [] : nothing -> list<string> {
 }
 
 def  get_command_prompt [] {
-    	( starship prompt ...(get_common_args) ) + "\n" 
+    	( starship prompt ...(get_common_args) ) 
         # + 
         # "\n"
         # (

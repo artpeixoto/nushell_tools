@@ -1,3 +1,4 @@
+use ../cmp_utils/ * ;
 export def "typeof" [ input? ] : [
     any -> string
 ] {

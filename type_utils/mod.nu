@@ -3,5 +3,4 @@
 
 
 
-module type_check.nu ;
-export use type_check * ;
+export use type_check.nu * ;
