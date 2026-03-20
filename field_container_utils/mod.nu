@@ -1,5 +1,5 @@
-module ./rename_deep.nu ;
-export use rename_deep * ;
+module ./deep.nu ;
+export use deep * ;
 
 module ./zip_record.nu ; 
 export use zip_record  * ;

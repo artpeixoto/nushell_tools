@@ -1,8 +1,13 @@
 use ../type_utils/  *;
 
-export def "into kv" [] : [any -> table<key: string, value: any>] {
+export def "into kv" [ 
+    --key_path (-k) : oneof<string, cell-path>   = key,
+    --value_path (-v) :oneof<string, cell-path>  = value
+
+] : [any -> table<key: string, value: any>] {
     let input = $in ; 
-    $input | columns | wrap key | insert value {|col| $input | get $col.key} 
+
+    $input | items {|k, v| ({} | insert $key_path $k | insert $value_path $v) }
 }
 
 # export def "into kv --deep" [] : [any -> table<key: string, value: any>] {
@@ -10,48 +15,17 @@ export def "into kv" [] : [any -> table<key: string, value: any>] {
 #     $input | columns | wrap key | insert value {|col| $input | get $col.key} 
 # }
 
-
 export def "from kv" [
-    --key_path   (-k) : oneof<string, oneof<cell-path, int>>, 
-    --value_path (-v) : oneof<string, oneof<cell-path, int>>
+    --key_path   (-k) : oneof<string, oneof<cell-path, int>> = key, 
+    --value_path (-v) : oneof<string, oneof<cell-path, int>> = value
 ] : [] {
-    let input = $in ; 
-
-    let get_default_paths = {
-        if ($input | is_table) {
-            let cols = $input | columns ;
-            if ("key" in $cols and "value" in $cols) {
-                return {key_path: "key", value_path: "value"}
-            } else if ("path" in $cols and "item" in $cols)  {
-                return {key_path: "path", value_path: "item"}
-            } else {
-                return {key_path: $cols.0, value_path: $cols.1}
-            }
-        } else if ($input | is_list) {
-            return {key_path: 0, value_path: 1}
-        } else {
-            let input_type = $input | typeof --full ; 
-            let input_metadata =  metadata $input
-            error make {
-                msg: $"i dont know how to deal with type ($input_type)"
-                labels: [{
-                    label: "in",
-                    span: $input_metadata.span
-                }] 
-            }
-        }
-    };
-    let paths = if (not ($key_path  == null or $value_path == null)) {
-        let default_paths = do $get_default_paths ;
-        $default_paths | merge ({key_path: $key_path, value_path: $value_path} | compact) 
-    } else {
-        {key_path: $key_path, value_path: $value_path}
-    }
-     
     mut res = {}
     
     for item in $in {
-        $res = $res | merge ( ($item | get $paths.value_path) | wrap ($item | get $paths.key_path) ) ;
+        let value = $item | get $value_path ;
+        let key   = $item | get $key_path; 
+
+        $res = $res | upsert $key $value ;
     }
 
     $res 
@@ -68,3 +42,5 @@ export def "from kv --list" [] : [
 
     $res 
 }
+
+

@@ -10,9 +10,9 @@ export def main [prompt: string, response_sample: any] : [any -> any] {
         to json
     );
 
-    let prompt = $"Resolve the following task. You response must be composed SOLELY of JSON. It should include no commentaries nor markdown. Follow output schema defined ahead. You may receive a list of inputs. In that case, your response must be a list, whose elements must, individually, match the schema.\n---\nTASK: ($prompt)\n---\nOUTPUT SCHEMA: ($schema_input)\n---\nINPUT: \'($input)\'";
+    let prompt = $"Resolve the following task. You response must be composed SOLELY of JSON. It should include no commentaries nor markdown. Follow output schema defined ahead. You may receive a list of inputs. In that case, your response must be a list, whose elements must, individually, match the schema.\n---\nTASK: ($prompt)\n---\nOUTPUT SCHEMA: ($schema_input)";
 
-    aichat $prompt | from json 
+    $input | aichat $prompt | from json 
 }
 
 export def generate_code [prompt: string, input_sample: any, response_sample: any ] : [nothing -> string] {

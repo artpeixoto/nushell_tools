@@ -6,6 +6,7 @@ export def main [] {
     
     let paths = $api.paths | into kv ;
     mut res = [] ; 
+
     
     for kvp in $paths {
         let path = $kvp.key ;
@@ -25,7 +26,7 @@ export def main [] {
                 $path_data = $path_data | update $method $req
             }
         }  
-
+        
         $res ++= [ {key: $path, value: $path_data } ]
     }
     

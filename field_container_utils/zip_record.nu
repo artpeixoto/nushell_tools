@@ -4,6 +4,7 @@ export def "zip --record"  [input?: record ] : [
 	record -> table
 	nothing -> table
 ] {
+		
 	let input = $in | default $input ;
 	let cols = $input | columns ;
 
