@@ -105,7 +105,7 @@ export-env {
 
 
         config: ($env.config? | default {} | merge {
-            render_right_prompt_on_last_line: false,
+            render_right_prompt_on_last_line: true,
         })
         PROMPT_COMMAND              : {|| get_command_prompt}
         PROMPT_COMMAND_RIGHT        : {|| get_right_prompt}

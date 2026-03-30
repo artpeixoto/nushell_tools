@@ -9,6 +9,6 @@ export module wrappers ;
 export module aifunc ; 
 export module openapi_utils ; 
 export module compression.nu ; 
-export module pg.nu ; 
+export module pg ; 
 
 export use env_utils/ ; 
