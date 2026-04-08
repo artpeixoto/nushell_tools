@@ -1,10 +1,28 @@
+use ../env_utils * ;
+
+export-env {
+	let cargo_default_home = $nu.home-dir | path join ".cargo"; 
+	default_env {
+		cargo: {
+			home: {
+				path : $cargo_default_home,
+			}
+			bin: {
+				path: ($cargo_default_home | path join bin)
+			} 
+		}
+	}
+}
+
 def --wrapped original_cargo [...rest] {
 	let cargo_path = which cargo | get path | first ; 
 	run-external $cargo_path ...$rest
 }
 
+
 export def --wrapped "cargo info" [crate_name: string, ...rest] {
-	let lines = original_cargo info -v $crate_name ...$rest | collect | lines
+	let lines = original_cargo info -vv $crate_name ...$rest | collect | lines
+
 	let first_line = $lines | get 0 | split row " "
 	let name = $first_line | first 
 	let tags = $first_line | skip 1 | where {str starts-with '#'} 
@@ -37,7 +55,8 @@ export def --wrapped "cargo info" [crate_name: string, ...rest] {
 				activations: $feature_activations
 			}
 		}
-	} | transpose --header-row --as-record
+	} | 
+	transpose --header-row --as-record
 
 	return {
 		name: $name,

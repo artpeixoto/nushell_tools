@@ -14,7 +14,7 @@ const element_pattern = '{name}.auth.json';
 
 
 export def "modules list" []: [nothing -> list<string>] { 
-    ls $env.auth.path | get name | each { path relative-to $env.auth.path } 
+    ls ($env.auth.path)  | get name | each { path relative-to $env.auth.path } 
 }
 
 export def "elements name_to_path" [] :   [ record<module: string , name: string> -> string ] {
@@ -38,14 +38,15 @@ export def "elements path_to_name" [] :   [ path -> record<module: string, name:
 }
 
 export def "elements list" [module: string@"modules list"] : [nothing -> list<string>] {
-    [$env.auth.path, $module] | 
-        path join | 
-        ls $in | 
-        get name | 
-        path expand | 
-        each { |name| 
+    let module_path = [$env.auth.path, $module] | path join ;
+
+        lstree ($module_path) | 
+        where type == file |
+        get name |
+        each {path expand} | 
+        each { |element| 
             try {
-                $name | elements path_to_name 
+                $element | elements path_to_name 
             } catch {|err| 
                 null 
             }

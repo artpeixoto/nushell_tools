@@ -1,5 +1,5 @@
 export def  --wrapped main [
-    auth?: record<host:string, port:int, user:string, password:string, database: string>, 
+    --auth: record<host:string, port:int, user:string, password:string, database: string>, 
     ...rest
 ] : [
     string  -> table, 
