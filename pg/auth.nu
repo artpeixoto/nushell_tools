@@ -2,7 +2,8 @@ export def --env load [] : [
     record<host:string, port:int, user:string, password:string> -> nothing
 ] {
     let auth = $in ; 
-    export-env { load-env {pg: {auth: $auth}} } 
+
+    export-env { load-env {pg: {auth: $auth, cache: {}}} } 
 }
 
 alias external_parse = parse ;

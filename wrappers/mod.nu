@@ -8,4 +8,6 @@ export use sys.nu ;
 export use git.nu ; 
 export module search.nu ;
 export module yazi.nu ;
-
+export module msys.nu ;
+export module xdg.nu; 
+export use xdg * ; 

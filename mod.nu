@@ -10,5 +10,7 @@ export module aifunc ;
 export module openapi_utils ; 
 export module compression.nu ; 
 export module pg ; 
+export module sql_server ;
+export module edit.nu ;
 
 export use env_utils/ ; 

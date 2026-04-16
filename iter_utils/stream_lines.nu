@@ -1,8 +1,4 @@
-use ../cmp_utils/ neq;
-use ../ 
-
-export def "from ssv" [
-    --col_sep (-s):  oneof<string, closure> = ' ',
+export def "stream lines" [
 ] { 
     let input = $in; 
     let main_id = job id;
@@ -12,6 +8,6 @@ export def "from ssv" [
         "done" | job send $main_id --tag $tag
     } 
     
-    let recv = { {job recv --tag $tag } |  take while {$in has data} | each {$in.data} } 
-
+    {job recv --tag $tag } | take while {$in has data} | each {$in.data} 
 }
+   

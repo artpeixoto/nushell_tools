@@ -1,5 +1,6 @@
 export def  --wrapped main [
     --auth: record<host:string, port:int, user:string, password:string, database: string>, 
+    --raw,
     ...rest
 ] : [
     string  -> table, 
@@ -28,17 +29,28 @@ export def  --wrapped main [
             ...$rest
         )
     } else {
-        $input | 
-        (   ^psql 
-            --host=($auth.host) 
-            --port=($auth.port) 
-            --username=($auth.user) 
-            --csv
-            --quiet
-            $database_parm 
-            ...$rest
-        ) | 
-        from csv 
+        if not $raw {
+            $input | 
+            (   ^psql 
+                --host=($auth.host) 
+                --port=($auth.port) 
+                --username=($auth.user) 
+                --csv
+                --quiet
+                $database_parm 
+                ...$rest
+            ) | 
+            from csv 
+        } else {
+            $input | 
+            (   ^psql 
+                --host=($auth.host) 
+                --port=($auth.port) 
+                --username=($auth.user) 
+                $database_parm 
+                ...$rest
+            )  
+        }
     }
 }
  
