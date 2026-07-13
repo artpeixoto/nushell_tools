@@ -2,7 +2,7 @@ use ../env_utils/ *  ;
 
 export-env { default_env {
     auth: {
-        path: ($nu.home-dir | path join ".local/share/auth")
+        path: ($nu.home-dir | path join ".local/auth")
     }
 }} ; 
 
@@ -55,9 +55,10 @@ export def "elements list" [module: string@"modules list"] : [nothing -> list<st
         get name
 } 
 
+
 module cmds { 
     export def retrieve [module : string@"modules list", name: string@"elements list"] { 
-        {module: $module, name: $name} | elements name_to_path | open $in 
+        {module: $module, name: $name} | elements name_to_path | open $in --raw |  
     }
 
     export def store [module: string@"modules list", name: string, --force (-f)] { 
@@ -73,4 +74,5 @@ module cmds {
         }
     }
 }
+
 export use cmds * ; 

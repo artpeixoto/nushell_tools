@@ -1,35 +1,44 @@
 use ../type_utils/  *;
 
-export def "into kv" [ 
+export def "into kv" [
     --key_path (-k) : oneof<string, cell-path>   = key,
     --value_path (-v) :oneof<string, cell-path>  = value
-
 ] : [any -> table<key: string, value: any>] {
-    let input = $in ; 
+    let input = $in ;
 
-    $input | items {|k, v| ({} | insert $key_path $k | insert $value_path $v) }
+    $input | items {|k, v| ({ $key_path:  $k , $value_path: $v}) }
 }
 
-# export def "into kv --deep" [] : [any -> table<key: string, value: any>] {
-#     let input = $in ; 
-#     $input | columns | wrap key | insert value {|col| $input | get $col.key} 
-# }
+export def "into kv --deep" [] : [any -> table<key: string, value: any>] {
+	use std-rfc/iter recurse;
+	use ../cellpath_utils.nu *;
+	let all = $in | recurse | rename key value;
+	let parents = $all | get key | each { cellpath parent } | uniq;
+
+	$all
+	| where key not-in $parents
+}
 
 export def "from kv" [
-    --key_path   (-k) : oneof<string, oneof<cell-path, int>> = key, 
+    --key_path   (-k) : oneof<string, oneof<cell-path, int>> = key,
     --value_path (-v) : oneof<string, oneof<cell-path, int>> = value
-] : [] {
+] : [
+	list -> record,
+	table -> record,
+	record -> record
+] {
     mut res = {}
-    
-    for item in $in {
+    let input = $in ;
+
+    for item in $input {
         let value = $item | get $value_path ;
-        let key   = $item | get $key_path; 
+        let key   = $item | get $key_path;
 
         $res = $res | upsert $key $value ;
     }
 
-    $res 
-} 
+    $res
+}
 
 
 export def "from kv --list" [] : [
@@ -40,7 +49,5 @@ export def "from kv --list" [] : [
         $res = $res | merge ($item.1 | wrap $item.0) ;
     }
 
-    $res 
+    $res
 }
-
-

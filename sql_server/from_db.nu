@@ -1,6 +1,6 @@
-use ./kv_utils/ * ;
+use ../kv_utils/ * ;
 use std/log;
-use ./type_utils/ * ; 
+use ../type_utils/ * ; 
 
 export def "from db" []: [] { 
     let start = 0 ;

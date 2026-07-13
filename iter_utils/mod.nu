@@ -1,12 +1,16 @@
-export module except.nu 
+export module except.nu
+export module generators.nu;
+export module rolling_window.nu;
 
-export module pipe { 
+export use generators *;
+
+export module pipe {
 
     export def new [] {
         let source_tag = random int;
         let sink_tag = random int;
         let pipe_tag = random int;
-         
+
 
         let pipe_job_id = job spawn {
             mut sink = {
@@ -22,7 +26,7 @@ export module pipe {
             mut request = null;
             def send [tag: int, dest: int] {
                 {msg: $in, meta: {tag: $tag, dest: $dest}} | job send $dest --tag $tag
-            } 
+            }
 
             alias recv = job recv;
 
@@ -30,7 +34,7 @@ export module pipe {
                 # alias send_sink = job send --tag $sink.tag $sink.job_id;
                 # alias send_source = job send --tag $source.tag $source.job_id;
 
-                match {source: $source.status, sink: $sink.status, } { 
+                match {source: $source.status, sink: $sink.status, } {
                     { sink: "disconnected", source: "disconnected"  } => {
                         match ( recv ) {
                             { meta: { tag: $tag, from: $peer, }, msg: "connect" } => {
@@ -38,7 +42,7 @@ export module pipe {
                                     $sink.job_id = $peer;
                                     $sink.status = "connected";
                                     "connected" | send $tag $peer
-                                    
+
                                 } else if $tag == $source_tag  {
                                     $source.job_id = $peer
                                     $source.status = "connected";
@@ -46,8 +50,8 @@ export module pipe {
                                     "connected" | send $tag $peer
                                 } else {
                                     {
-            
-                                    }        
+
+                                    }
                                 }
                             }
                             {from: "source", cmd: "connect", job_id: $job_id } => {
@@ -88,29 +92,29 @@ export module pipe {
 
             mut status = running;
 
-            for el in $data { 
+            for el in $data {
                 let ping = do $recv;
-                match $ping { 
-                    { cmd: send, dest: $dest} => { 
-                        { data: $el } | do $send $dest 
+                match $ping {
+                    { cmd: send, dest: $dest} => {
+                        { data: $el } | do $send $dest
                     },
                     { cmd: stop } => {
-                        return; 
+                        return;
                     }
                 }
-            } 
-             
+            }
+
             let ping = do $recv;
 
-            match $ping { 
-                { cmd: send, dest: $dest} => { 
-                    done | do $send $dest 
+            match $ping {
+                { cmd: send, dest: $dest} => {
+                    done | do $send $dest
                 },
                 { cmd: stop } => {
-                    return; 
+                    return;
                 }
             }
-        }; 
+        };
 
         return {
             job: $source_job,

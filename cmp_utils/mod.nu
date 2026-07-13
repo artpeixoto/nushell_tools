@@ -6,6 +6,7 @@ export def lt [relative_to: any] : [any -> bool] { $in < $relative_to }
 export def le [relative_to: any] : [any -> bool] { $in <= $relative_to }
 
 export def neg [] : [bool -> bool] { not $in }
+export def not [] : [bool -> bool] { not $in }
 
 export def add [rhs : any] : [any -> any] {$in + $rhs}
 export def sub [rhs : any] : [any -> any] {$in - $rhs}

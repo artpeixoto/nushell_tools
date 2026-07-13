@@ -1,5 +1,6 @@
-module ./deep.nu ;
-export use deep * ;
+export use ./deep.nu * ;
 
-module ./zip_record.nu ; 
+module ./zip_record.nu ;
 export use zip_record  * ;
+
+export module ./pick.nu   ;

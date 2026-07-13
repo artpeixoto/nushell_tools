@@ -10,5 +10,5 @@ export def --env main [vars?]  {
     }
     let to_load = $vars | merge deep $envs  ;
 
-    load-env $to_load ; 
+    export-env { load-env $to_load }  ; 
 }
