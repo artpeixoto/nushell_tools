@@ -39,8 +39,8 @@ export def "upsert --deep" [path: oneof<oneof<cell-path, string>, nothing>, valu
 export def "default --deep" [ value: oneof<record, nothing> ] : [
 	oneof<record, nothing> -> record
 ] {
-	use kv_utils/ * ;
-	use cellpath_utils.nu  * ;
+	use ../kv_utils/ * ;
+	use ../cellpath_utils.nu  * ;
 
 	let value_kvs = (
 		$value
@@ -62,7 +62,7 @@ export def "default --deep" [ value: oneof<record, nothing> ] : [
 }
 
 export def "wrap" [path: cell-path] {
-	use kv_utils/ * ;
+	use ../kv_utils/ * ;
 
 	{key: $path, value: $in } | from kv
 }

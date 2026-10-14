@@ -1,0 +1,26 @@
+[package]
+
+name = "pest_cli"
+version = "0.1.0"
+authors = ["Artur Peixoto de Souza Lino <arturokfya@gmail.com>"]
+edition = "2024"
+description = "a nushell plugin called pest"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = { version = "1.0.104", features = ["backtrace"] }
+pest = { version = "2.9.1", features = ["pretty-print"] }
+pest_derive = { version = "2.9.1", features = ["grammar-extras"] }
+pest_meta = { version = "2.9.1", features = ["grammar-extras"] }
+pest_vm = { version = "2.9.1", features = ["grammar-extras"] }
+quicli = "0.4.0"
+serde = "1.0.229"
+serde-content = { version = "0.1.2", features = ["serde"] }
+serde_json = "1.0.151"
+tap = "1.0.1"
+
+[dev-dependencies]
+# nu-plugin-test-support = { path = "../nushell/crates/nu-plugin-test-support" }
+# nu-plugin-test-support = { version = "0.104.0" }

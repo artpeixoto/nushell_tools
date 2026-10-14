@@ -18,8 +18,50 @@ def conditional-pipe [
   if $condition { do $action } else { }
 }
 
-export def xs-addr [] {
-  $env | get XS_ADDR? | or-else { "~/.local/share/cross.stream/store" | path expand }
+use ./type_utils/mod.nu *;
+use ./cond_utils/if_then.nu *;
+use ./cmp_utils/mod.nu *;
+
+export def "store addr" [] {
+    let option = (
+        store addr get-options
+        | where { get value | is-not-empty }
+        | where {|opt|
+            ( $opt.use_if_set )  or ($opt.value | path  exists)
+        }
+        | first
+        | default { error make "No store is open" }
+    );
+
+    log debug $"Using ($option.name) store at ($option.value)";
+
+    $option.value
+}
+
+
+export def --env "store addr set" [] : [path -> nothing ] {
+    let val = $in ;
+    $env.xs.store = $in
+}
+
+export def "store addr get-options" [] : nothing -> table<name: string, value: oneof<string, nothing>, use_if_set: bool> {
+    [
+        ["env", $env.xs?.store?, true ],
+        ["local", ( pwd | path join ".cross_stream_store" | path expand), false ],
+        ["user", ( "~/.local/share/cross.stream/store" | path expand ), false ],
+    ]
+    | each { {name: $in.0, value: $in.1, use_if_set: $in.2}}
+}
+
+export def --env "store serve" [] {
+    let option = (
+        store addr get-options
+        | where { get value | is-not-empty }
+        | first
+    );
+
+    log info $"Creating ($option.name) store at ($option.value)";
+    ^xs serve $option.value;
 }
 
 # Normalize a topic filter to the comma-separated string the CLI expects.
@@ -45,36 +87,47 @@ def _cat [options: record] {
     (if $options.last? != null { ["--last" $options.last] })
     (if $options.pulse? != null { ["--pulse" $options.pulse] })
     (if $options.topic? != null { ["--topic" (topic-arg $options.topic)] })
-  ] | compact | flatten
+  ]
+  | compact
+  | flatten
 
-  xs cat (xs-addr) ...$params | lines | each {|x|
+  xs cat (store addr) ...$params | lines | each {|x|
     $x | from json | if $with_ts { into datetime timestamp } else { }
   }
 }
+export def "topic list"  [] {
+
+}
 
 export def .cat [
-  --follow (-f) # long poll for new events
+  --topic (-T): oneof<list<string>, string> # filter by topic pattern(s): a string (commas allowed) or a list of strings
   --pulse (-p): int # specifies the interval (in milliseconds) to receive a synthetic "xs.pulse" event
   --new (-n) # skip existing, only show new
-  --detail (-d) # include all frame fields in the output
-  --with-timestamp # include RFC3339 timestamp extracted from frame ID
+  --long (-l) # include all frame fields in the output
   --after: string # start after a specific frame ID (exclusive)
   --from: string # start from a specific frame ID (inclusive)
-  --limit: int
   --last: int # return the last N events (most recent)
-  --topic (-T): oneof<list<string>, string> # filter by topic pattern(s): a string (commas allowed) or a list of strings
 ] {
   _cat {
-    follow: $follow
+    follow: true,
     pulse: $pulse
     new: $new
-    with_timestamp: $with_timestamp
+    with_timestamp: true,
     after: $after
     from: $from
-    limit: $limit
+    limit: null,
     last: $last
     topic: $topic
-  } | conditional-pipe (not $detail) { each { reject ttl } }
+  }
+  | each {
+      let metadata = $in;
+      let content  = $metadata | get hash | cas get;
+      if $long {
+          return {metadata: $metadata, value: $content}
+      } else {
+          return $content
+      }
+  }
 }
 
 def read_hash [hash?: any] {
@@ -85,22 +138,31 @@ def read_hash [hash?: any] {
   }
 }
 
+export def "cas get" [hash?: string] {
+    let hash = (
+        ( $in | each { read_hash } )
+        | default $hash
+        | default {error make "No cas hash given"}
+    );
+    xs cas (store addr) $hash
+}
+
 export def .cas [hash?: any] {
   let alt = $in
   let hash = read_hash (if $hash != null { $hash } else { $alt })
   if $hash == null { return }
-  xs cas (xs-addr) $hash
+  xs cas (store addr) $hash
 }
 
 export def .cas-post [] {
-  $in | xs cas-post (xs-addr)
+  $in | xs cas-post (store addr)
 }
 
 export def .get [
   id: string
   --with-timestamp # include RFC3339 timestamp extracted from frame ID
 ] {
-  xs get (xs-addr) $id ...(if $with_timestamp { ["--with-timestamp"] } else { [] })
+  xs get (store addr) $id ...(if $with_timestamp { ["--with-timestamp"] } else { [] })
   | from json
   | if $with_timestamp { into datetime timestamp } else { }
 }
@@ -127,7 +189,7 @@ export def .last [
     (if $with_timestamp { ["--with-timestamp"] })
   ] | compact | flatten
 
-  let result = xs last (xs-addr) ...$cli_args | lines | each {|x|
+  let result = xs last (store addr) ...$cli_args | lines | each {|x|
     $x | from json | if $with_timestamp { into datetime timestamp } else { }
   }
   if $count <= 1 { $result | first } else { $result }
@@ -144,7 +206,7 @@ export def .append [
   #   - "last:<n>": Retains only the last n events for the topic (n must be >= 1).
   --with-timestamp # include RFC3339 timestamp extracted from frame ID
 ] {
-  xs append (xs-addr) $topic ...(
+  xs append (store addr) $topic ...(
     [
       (if $meta != null { ["--meta" ($meta | to json -r)] })
       (if $ttl != null { ["--ttl" $ttl] })
@@ -154,7 +216,7 @@ export def .append [
 }
 
 export def .remove [id: string] {
-  xs remove (xs-addr) $id
+  xs remove (store addr) $id
 }
 
 export alias .rm = .remove
@@ -166,7 +228,7 @@ export def .export [path: string] {
   }
   mkdir ($path | path join "cas")
 
-  xs cat (xs-addr) | save ($path | path join "frames.jsonl")
+  xs cat (store addr) | save ($path | path join "frames.jsonl")
 
   open ($path | path join "frames.jsonl") | lines | each { from json | get hash } | uniq | each {|hash|
     let hash_64 = $hash | encode base64
@@ -179,7 +241,7 @@ export def .export [path: string] {
 export def .import [path: string] {
   glob ([$path "cas"] | path join "*") | each {|x|
     let want = ($x | path basename | decode base64 | decode)
-    let got = cat $x | xs cas-post (xs-addr)
+    let got = cat $x | xs cas-post (store addr)
     if $got != $want {
       return (
         error make {
@@ -191,7 +253,7 @@ export def .import [path: string] {
   }
 
   open ($path | path join "frames.jsonl") | lines | each {
-    from json | to json -r | xs import (xs-addr)
+    from json | to json -r | xs import (store addr)
   }
 }
 
@@ -201,9 +263,9 @@ export def .eval [
   --commands (-c): string   # Evaluate script from command line
 ] {
   if $commands != null {
-    xs eval (xs-addr) -c $commands
+    xs eval (store addr) -c $commands
   } else if $file != null {
-    xs eval (xs-addr) $file
+    xs eval (store addr) $file
   } else {
     let input_script = $in
     if $input_script == null {
@@ -212,7 +274,7 @@ export def .eval [
         help: "Provide a file (.eval script.nu), use -c (.eval -c '<script>'), or pipe input ('<script>' | .eval)"
       }
     }
-    xs eval (xs-addr) -c $input_script
+    xs eval (store addr) -c $input_script
   }
 }
 

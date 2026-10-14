@@ -1,4 +1,5 @@
 export def "stream lines" [
+    
 ] { 
     let input = $in; 
     let main_id = job id;
@@ -8,6 +9,8 @@ export def "stream lines" [
         "done" | job send $main_id --tag $tag
     } 
     
-    {job recv --tag $tag } | take while {$in has data} | each {$in.data} 
+    {job recv --tag $tag } 
+    | take while {$in has data} 
+    | each {$in.data} 
 }
-   
+ 

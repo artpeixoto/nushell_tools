@@ -1,5 +1,5 @@
 export def --wrapped main [...rest] {
- ( sudo tshark -T tabs  -x --print
+ ( sudo tshark -T tabs ...$rest -x --print
  | split row "\n\n"
  | chunks 2
  | each {|data|

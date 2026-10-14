@@ -5,7 +5,7 @@ export def "typeof" [ input? ] : [
     let pipe_in = $in ;
 
     $input
-    | default $pipe_in
+    | default {ignore | $pipe_in}
     | describe
     | split row "<"
     | first
@@ -35,7 +35,7 @@ export def "is iterable" [] : [] {
 
 export def "is string" [] : [] {
     $in | typeof | eq "string"
-} 
+}
 
 # this is true if the type cant be accessed through cellpaths
 # inverse of" i"s container

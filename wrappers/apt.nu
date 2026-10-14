@@ -1,7 +1,7 @@
 use ../str_utils/ * ;
 
 
-export  def --wrapped search [query: string, --count=10, ...rest] {
+export  def --wrapped search [query: string, --count=1000, ...rest] {
 	^apt search $query ...$rest
     | parse_search_list
     | take $count

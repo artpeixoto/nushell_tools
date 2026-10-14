@@ -1,6 +1,7 @@
 export def infer [] : [any -> any] {
     $in | to json |  genson-cli | from json
 }
+
 export def "infer --raw" [] : [any -> any] {
     $in  |  genson-cli | from json
 }

@@ -1,6 +1,6 @@
 export def main [...rest] {
-	use kv_utils/ * ;
-	use cellpath_utils.nu  * ;
+	use ../kv_utils/ * ;
+	use ../cellpath_utils.nu  * ;
 	use ./deep.nu *;
 
 	let input = $in ;

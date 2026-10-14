@@ -8,15 +8,15 @@ def get_jobs_list [] { }
 def get_common_args [] : nothing -> list<string> {
     let path_args = [--path, ( pwd )]
     let cmd_duration_args = [
-        --cmd-duration , 
-        (if $env.CMD_DURATION_MS == "0823" { 0 } else { $env.CMD_DURATION_MS }) 
+        --cmd-duration ,
+        (if $env.CMD_DURATION_MS == "0823" { 0 } else { $env.CMD_DURATION_MS })
     ];
 
     let jobs_list_args = if (which "job list" | where type == built-in | is-not-empty) {
         ["--jobs", (job list | length)]
         } else {
             []
-        } 
+        }
 
     let status_args = [$"--status=($env.LAST_EXIT_CODE)"]
     let terminal_width_args = ["--terminal-width", ( (term size).columns | into string )]
@@ -30,8 +30,8 @@ def get_common_args [] : nothing -> list<string> {
 }
 
 def  get_command_prompt [] {
-    	( starship prompt ...(get_common_args) ) 
-        # + 
+    	( starship prompt ...(get_common_args) )
+        # +
         # "\n"
         # (
         #     # The initial value of `$env.CMD_DURATION_MS` is always `0823`, which is an official setting.
@@ -50,7 +50,7 @@ def  get_command_prompt [] {
         #             }
         #         )
         # )
-    } 
+    }
 
 def get_command_indicator_prompt [mode:string]: nothing -> closure {
     let res = match $mode {
@@ -83,17 +83,18 @@ def get_right_prompt [] {
                     }
                 )
         )
-    } 
+    }
 def get_after_cmd [] {
     let status  =  starship module status ...(get_common_args)
     let fill    = starship module fill ...(get_common_args)
     let fill_size = (term size).columns - ($status | str length)
     let fill_str = seq 1 $fill_size | each {$fill} | str join
-    "\n" + $status + $fill_str  
+
+    "\n" + $status + $fill_str
 }
 
-export-env { 
-    $env.STARSHIP_SHELL = "nu"; 
+export-env {
+    $env.STARSHIP_SHELL = "nu";
     load-env {
         STARSHIP_SESSION_KEY: (random chars -l 16)
         # PROMPT_MULTILINE_INDICATOR: (

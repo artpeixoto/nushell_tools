@@ -28,7 +28,7 @@ export def --wrapped "cargo info" [crate_name: string, ...rest] {
 	    let lines = $in;
 	    let name_header = $lines | get 0 | split row " " --number 2 ;
 	    let name = $name_header.0
-	    let tags = $name_header.1 | split row " " | parse --regex '#(?<tag>.+)'  | get tag;
+	    let tags = $name_header.1? | each { $in | split row " " | parse --regex '#(?<tag>.+)'  | get tag } | default {[]} ;
 
 	    let description = $lines.1;
 
@@ -62,6 +62,7 @@ export def --wrapped "cargo info" [crate_name: string, ...rest] {
 						" " => false,
 					}
 				}}
+				| update name { str substring 1.. }
 				| move active --last
 	        );
 	    }
@@ -73,4 +74,29 @@ export def --wrapped "cargo info" [crate_name: string, ...rest] {
 	        ...$remainder
 	    }
 	}
+}
+
+export module nu-complete {
+    export def cargo-features [context?: string] {
+        log info ($in | to nuon);
+
+        $context
+        | log info $"($in | to nuon)";
+
+        cargo info ($context | split words | get 2)
+        | get features --optional
+        | get name
+    }
+}
+use nu-complete;
+export def --wrapped "cargo add"  [
+    crate_name: string,
+    --features (-f): list@"nu-complete cargo-features"
+    ...rest
+] {
+    (^cargo add $crate_name
+        --features ($features | str join " ")
+        ...$rest
+    )
+
 }

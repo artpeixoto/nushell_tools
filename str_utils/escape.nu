@@ -5,3 +5,4 @@ export def "str escape" [] : [string -> string] {
 export def "str unescape" [] : [string -> string] {
     $in | from json
 }
+

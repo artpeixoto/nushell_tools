@@ -12,7 +12,7 @@ def --wrapped "inner_ollama_exe" [...rest] {
 }
 
 def --wrapped "inner_ollama_web" [path: string, headers?: record ...rest] {
-	use ../field_container_utils/ * ;
+	use ../../field_container_utils/ * ;
 	let auth = auth get;
 	let protocol = if $auth.uses_tls { "https://" } else { "http://" };
 
@@ -71,9 +71,9 @@ export def --wrapped "ls" [...rest] {
 }
 
 export def --env "ollama auth load" [--host: string, --key: string, --uses_tls = false, --no_export_vendor = false] {
-	use ../kv_utils/ *;
-	use ../field_container_utils/ * ;
-	use ../cellpath_utils.nu *;
+	use ../../kv_utils/ *;
+	use ../../field_container_utils/ * ;
+	use ../../cellpath_utils.nu *;
 	let auth_value =  (
 		{
 			host: $host,
@@ -87,7 +87,7 @@ export def --env "ollama auth load" [--host: string, --key: string, --uses_tls =
 	$env
 	| pick ($env_config_path | cellpath optional)
 	| upsert --deep $env_config_path $auth_value
-	| tee { log info $"loading ollama env: \n($in | table -e)" }
+	# | tee { log info $"loading ollama env: \n($in | table -e)" }
 	| load-env $in;
 
 	let export_vendor = ( not $no_export_vendor ); # for the sake of clarity
@@ -97,7 +97,7 @@ export def --env "ollama auth load" [--host: string, --key: string, --uses_tls =
 }
 
 export def --env "ollama auth load --local" [--no_export_vendor = false] {
-	use kv_utils/ *;
+	use ../../kv_utils/ *;
 	let host = "localhost:11434"
 
 
@@ -105,7 +105,7 @@ export def --env "ollama auth load --local" [--no_export_vendor = false] {
 }
 
 export def --env "ollama auth load --cloud" [--no_export_vendor = false] {
-	use kv_utils/ *;
+	use ../../kv_utils/ *;
 	let key = (
 		open $"($env.HOME)/.local/auth/ollama.auth.pgp"
 		| gpg --decrypt
@@ -161,7 +161,7 @@ export def "ollama chat" [--model: string, --prompt: string, --history: table, -
 export def "ollama embed" [ --dimensions: int, --model: string ] : [
 	string -> list<float>
 ] {
-	use ../field_container_utils/ * ;
+	use ../../field_container_utils/ * ;
 	let parms = (
 		{ model: $model, dimensions: $dimensions }
 		| compact
@@ -187,10 +187,10 @@ export def "ollama run" [
 	table -> string,
 	string -> string,
 ] {
-	use ../json/;
-	use ../cond_utils/ * ;
-	use ../type_utils/  * ;
-	use ../cmp_utils/ * ;
+	use ../../json/;
+	use ../../cond_utils/ * ;
+	use ../../type_utils/  * ;
+	use ../../cmp_utils/ * ;
 
 	let model = $model | default {  error make "model must be informed" }
 

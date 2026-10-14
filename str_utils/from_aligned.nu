@@ -1,17 +1,1 @@
 use ../cmp_utils/ neq;
-use ../ 
-
-export def "from ssv" [
-    --col_sep (-s):  oneof<string, closure> = ' ',
-] { 
-    let input = $in; 
-    let main_id = job id;
-    let tag = random int ; 
-    let line_splitter_job = job spawn { 
-        $input | lines | each { wrap data | job send $main_id --tag $tag };
-        "done" | job send $main_id --tag $tag
-    } 
-    
-    let recv = { {job recv --tag $tag } |  take while {$in has data} | each {$in.data} } 
-
-}

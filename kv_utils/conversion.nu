@@ -1,18 +1,19 @@
 use ../type_utils/  *;
 
 export def "into kv" [
-    --key_path (-k) : oneof<string, cell-path>   = key,
-    --value_path (-v) :oneof<string, cell-path>  = value
-] : [any -> table<key: string, value: any>] {
+    --key_path   (-k) : oneof<string, cell-path>  = key,
+    --value_path (-v) : oneof<string, cell-path>  = value
+] : [any -> table<key: cell-path, value: any>] {
     let input = $in ;
 
     $input | items {|k, v| ({ $key_path:  $k , $value_path: $v}) }
 }
 
-export def "into kv --deep" [] : [any -> table<key: string, value: any>] {
+export def "into kv --deep" [] : [any -> table<key: cell-path, value: any>] {
 	use std-rfc/iter recurse;
 	use ../cellpath_utils.nu *;
-	let all = $in | recurse | rename key value;
+
+	let all     = $in  | recurse | rename key value ;
 	let parents = $all | get key | each { cellpath parent } | uniq;
 
 	$all
@@ -36,7 +37,7 @@ export def "from kv" [
 
         $res = $res | upsert $key $value ;
     }
-
+    
     $res
 }
 

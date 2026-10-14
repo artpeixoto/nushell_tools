@@ -1,8 +1,10 @@
-export def "from srt" [] {
-
+export def "from srt" [] : [
+    string -> table<index: int, start_timestamp: string, end_timestamp: string, content: string>
+] {
 	( $in
 	| split row "\n\n"
 	| parse --regex '\A(?<index>\d+)\n(?<start_timestamp>[0-9:,]+) --> (?<end_timestamp>[0-9:,]+)\n(?<content>\O*\z)'
+	| update index {into int}
 	)
 }
 
